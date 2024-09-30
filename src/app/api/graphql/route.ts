@@ -1,7 +1,7 @@
 import { createSchema, createYoga } from "graphql-yoga";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { resolvers } from "@/graphql/resolvers";
-import { typeDefs } from "@/graphql/schema";
+import { resolvers } from "@/src/graphql/resolvers";
+import { typeDefs } from "@/src/graphql/schema";
 
 const { handleRequest } = createYoga<{
   req: NextApiRequest;

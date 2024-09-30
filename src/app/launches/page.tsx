@@ -1,40 +1,14 @@
 "use client";
 
 import Head from "next/head";
-import { gql, useLazyQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import Loader from "../loading";
 import { toast } from "react-toastify";
-import clientObject from "@/lib/apollo";
-
-
-interface Launch {
-  id: string;
-  mission_name: string;
-  launch_date_utc: string;
-  rocket: {
-    rocket_name: string;
-  };
-  launch_site: {
-    site_name: string;
-  } | null;
-}
-
-const GET_LAUNCHES = gql`
-  query GetUpcomingLaunches {
-    launchesUpcoming {
-      id
-      mission_name
-      launch_date_utc
-      rocket {
-        rocket_name
-      }
-      launch_site {
-        site_name
-      }
-    }
-  }
-`;
+import clientObject from "@/src/lib/apollo";
+import { GET_LAUNCHES } from "@/src/graphql/query/launch";
+import { Launch } from "./type";
+import UpcomingLaunches from "@/src/components/Launches";
 
 export default function Launches() {
   const [fetchUpcomingLaunches, { loading, error, data }] = useLazyQuery<{
@@ -42,11 +16,14 @@ export default function Launches() {
   }>(GET_LAUNCHES, { client: clientObject.client });
   const [search, setSearch] = useState("");
 
-  const filteredLaunches = data?.launchesUpcoming.filter(
-    (launch) =>
-      launch.mission_name.toLowerCase().includes(search.toLowerCase()) ||
-      launch.launch_site?.site_name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredLaunches =
+    data?.launchesUpcoming.filter(
+      (launch) =>
+        launch.mission_name.toLowerCase().includes(search.toLowerCase()) ||
+        launch.launch_site?.site_name
+          .toLowerCase()
+          .includes(search.toLowerCase())
+    ) || [];
 
   const handleClick = async () => {
     fetchUpcomingLaunches();
@@ -90,29 +67,7 @@ export default function Launches() {
         {loading ? (
           <Loader loading={loading} />
         ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredLaunches?.map((launch) => (
-              <li
-                key={launch.id}
-                className="bg-[#364051] p-3 border-2 border-[#828B99] rounded-md"
-              >
-                <h1 className="font-bold text-gray-700 dark:text-gray-400">
-                  {`Mission ${launch.mission_name}`}
-                </h1>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {`Rocket Name: ${launch.rocket.rocket_name}`}
-                </p>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {`Launch Date: ${new Date(
-                    launch.launch_date_utc
-                  ).toLocaleString()}`}
-                </p>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {`Launch Site: ${launch.launch_site?.site_name}` || "N/A"}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <UpcomingLaunches filteredLaunches={filteredLaunches} />
         )}
       </div>
     </div>
