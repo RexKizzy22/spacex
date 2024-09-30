@@ -5,6 +5,7 @@ import { gql, useLazyQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import Loader from "../loading";
 import { toast } from "react-toastify";
+import clientObject from "@/lib/apollo";
 
 
 interface Launch {
@@ -38,7 +39,7 @@ const GET_LAUNCHES = gql`
 export default function Launches() {
   const [fetchUpcomingLaunches, { loading, error, data }] = useLazyQuery<{
     launchesUpcoming: Launch[];
-  }>(GET_LAUNCHES);
+  }>(GET_LAUNCHES, { client: clientObject.client });
   const [search, setSearch] = useState("");
 
   const filteredLaunches = data?.launchesUpcoming.filter(
