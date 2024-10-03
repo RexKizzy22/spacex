@@ -1,18 +1,9 @@
 import { createSchema, createYoga } from "graphql-yoga";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { resolvers } from "@/src/graphql/resolvers";
-import { typeDefs } from "@/src/graphql/schema";
+import requestObject from "../handleRequest";
 
-const { handleRequest } = createYoga<{
-  req: NextApiRequest;
-  res: NextApiResponse;
-}>({
-  schema: createSchema({
-    typeDefs,
-    resolvers,
-  }),
-  graphqlEndpoint: "/api/graphql",
-});
+
+const { handleRequest } = requestObject(process.env.NEXT_PUBLIC_SERVER_URL || "");
 
 export {
   handleRequest as GET,

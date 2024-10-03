@@ -1,4 +1,6 @@
+import { readFile } from "fs/promises";
 import { fetchLaunches } from "./query/launch";
+import dummyData from "../../spaceX_Launches_Locations.json";
 
 const mockLaunchSite = {
   site_name: "Unknown Site",
@@ -18,5 +20,14 @@ export const resolvers = {
 
       return transformedData;
     },
+    dummy: async () => {
+      try {
+        return dummyData
+
+        
+      } catch (error) {
+        return "Error occurred!!!"
+      }
+    }
   },
 };

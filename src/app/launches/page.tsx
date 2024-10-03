@@ -9,12 +9,17 @@ import clientObject from "@/src/lib/apollo";
 import { GET_LAUNCHES } from "@/src/graphql/query/launch";
 import { Launch } from "./type";
 import UpcomingLaunches from "@/src/components/Launches";
+import { GET_DUMMY } from "@/src/graphql/query/dummy";
+import UpcomingLaunch from "@/src/components/Launch";
 
 export default function Launches() {
   const [fetchUpcomingLaunches, { loading, error, data }] = useLazyQuery<{
     launchesUpcoming: Launch[];
   }>(GET_LAUNCHES, { client: clientObject.client });
   const [search, setSearch] = useState("");
+  const [selectedSites, setSelectedSites] = useState<Launch | undefined>(
+    undefined
+  );
 
   const filteredLaunches =
     data?.launchesUpcoming.filter(
@@ -39,6 +44,22 @@ export default function Launches() {
         <title>Space X</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <h3 className="flex justify-center mt-3 pt-3 text-2xl border-[red] font-bold tracking-tight text-gray-900 dark:text-white">
+        Selected Sites
+      </h3>
+
+      <div className="container text-center max-w-5xl my-8 p-4 mx-auto">
+        {!selectedSites && <p className="flex justify-center">None Selected</p>}
+
+        {selectedSites && (
+          <UpcomingLaunch
+            launch={selectedSites}
+            setSelectedSites={setSelectedSites}
+            key={0}
+          />
+        )}
+      </div>
 
       <h1 className="flex justify-center mt-3 pt-3 text-2xl border-[red] font-bold tracking-tight text-gray-900 dark:text-white">
         Upcoming SpaceX Launches
@@ -67,7 +88,10 @@ export default function Launches() {
         {loading ? (
           <Loader loading={loading} />
         ) : (
-          <UpcomingLaunches filteredLaunches={filteredLaunches} />
+          <UpcomingLaunches
+            filteredLaunches={filteredLaunches}
+            setSelectedSites={setSelectedSites}
+          />
         )}
       </div>
     </div>

@@ -15,7 +15,21 @@ export const typeDefs = `
         site_name: String
     }
 
+    type Dummy {
+      city: String
+      zip_code: String
+      weather: Weather
+    }
+
+    type Weather {
+      temperature: Int
+      condition: String
+      wind: String
+    }
+
     type Query {
         launchesUpcoming: [launchesUpcoming]
+        dummy: [Dummy]
     }
 `;
+
